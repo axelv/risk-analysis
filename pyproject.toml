@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "risk-analysis"
+version = "0.1.0"
+description = ""
+authors = ["Axel Vanraes <axel.vanraes@tiro.health>"]
+readme = "README.md"
+packages = [{include = "risk_analysis"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pandas = "^2.1"
+streamlit = "^1.27.0"
+plotly = "^5.17.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
