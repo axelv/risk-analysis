@@ -1,4 +1,6 @@
 import pandas as pd
+from pathlib import Path
+import tempfile
 import streamlit as st
 from urllib.request import urlretrieve
 from urllib.parse import urlparse
@@ -11,11 +13,16 @@ urls = [url.strip() for url in url_input.split("\n") if url.strip() != ""]
 if len(urls) == 0:
     st.stop()
 dfs = {}
+if "tempdir" not in st.session_state:
+    tempdir = tempfile.mkdtemp() 
+    st.session_state["tempdir"] = tempdir
+tempdir = Path(st.session_state["tempdir"])
 for url in urls: 
-    name = urlparse(url).path[-1]
-    urlretrieve(url, "data.csv")
+    name = urlparse(url).path
+    urlretrieve(url, tempdir/"data.csv")
     dfs[name] = pd.read_csv("data.csv",index_col=0, parse_dates=True).replace(0, pd.NA)
-df = next(iter(dfs.values()))
+name = st.selectbox("Select a stock", list(dfs.keys()))
+df = dfs[name]
 st.dataframe(df.head())
 fig = go.Figure(data=[go.Candlestick(x=df.index, open=df["Open"], high=df["High"], low=df["Low"], close=df["Close"])])
 st.plotly_chart(fig)
